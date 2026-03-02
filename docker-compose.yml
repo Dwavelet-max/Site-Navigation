@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  site-navigation:
+    build: .
+    container_name: site_navigation
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./sitevault/instance/sitevault.db:/app/sitevault/instance/sitevault.db
+      - ./sitevault/static/uploads:/app/sitevault/static/uploads
+    restart: unless-stopped
+    networks:
+      - site
+
+networks:
+  site:
+    driver: bridge

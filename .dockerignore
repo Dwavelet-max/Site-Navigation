@@ -1,0 +1,11 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+sitevault.db
+*.sqlite
+.DS_Store
+.git/
+.gitignore
+node_modules/
+.log

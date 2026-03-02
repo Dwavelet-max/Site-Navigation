@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Navigation - 站点导航</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #c96a3e;
+            --primary-light: #e08a5a;
+            --primary-dark: #a85530;
+            --bg-main: #fdf8f4;
+            --bg-sub: #faf3ed;
+            --card: #ffffff;
+            --text: #3d2e24;
+            --text-light: #7a6458;
+            --text-muted: #a89085;
+            --success: #8fb996;
+            --success-dark: #6a9a72;
+            --danger: #d96c6c;
+            --border: #ede4dc;
+            --border-light: #f3ebe3;
+            --shadow-sm: 0 2px 8px rgba(61, 46, 36, 0.06);
+            --shadow-md: 0 4px 16px rgba(61, 46, 36, 0.08);
+            --shadow-lg: 0 8px 32px rgba(61, 46, 36, 0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0.875rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.375rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-md);
+            background: var(--bg-sub);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .stat-item:hover {
+            background: var(--border-light);
+        }
+        
+        .stat-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--primary);
+            line-height: 1.3;
+        }
+
+        .stat-label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+            
+        
+        
+        
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .toolbar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 240px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.6875rem 1rem 0.6875rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+        
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.875rem;
+        }
+        
+        .login-container {
+            min-height: calc(100vh - 65px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-main);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(201, 106, 62, 0.06) 0%, transparent 70%);
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .login-container::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(224, 138, 90, 0.05) 0%, transparent 60%);
+            bottom: -200px;
+            right: -100px;
+        }
+        
+        .login-box {
+            background: var(--card);
+            padding: 3rem 2.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            border: 1px solid var(--border-light);
+        }
+        
+        .login-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 8px 24px rgba(201, 106, 62, 0.25);
+        }
+        
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.375rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .login-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+        
+        .login-error {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            white-space: nowrap;
+        }
+        
+        .btn-sm {
+            padding: 0.375rem 0.875rem;
+            font-size: 0.8125rem;
+            border-radius: var(--radius-sm);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(201, 106, 62, 0.25);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(201, 106, 62, 0.35);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+            box-shadow: 0 2px 8px rgba(143, 185, 150, 0.3);
+        }
+        
+        .btn-success:hover {
+            background: var(--success-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(143, 185, 150, 0.4);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            box-shadow: 0 2px 8px rgba(217, 108, 108, 0.3);
+        }
+        
+        .btn-danger:hover {
+            background: #c45555;
+            transform: translateY(-1px);
+        }
+        
+        .btn-ghost {
+            background: var(--bg-sub);
+            color: var(--text-light);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-ghost:hover {
+            background: var(--border-light);
+            color: var(--text);
+            border-color: var(--text-muted);
+        }
+        
+        .filter-btns {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.4375rem 0.9375rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--card);
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .site-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.25rem;
+        }
+        
+        .site-card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .site-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+        
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            gap: 0.75rem;
+        }
+        
+        .site-title {
+            font-weight: 600;
+            font-size: 1.0625rem;
+            color: var(--text);
+            word-break: break-word;
+            line-height: 1.4;
+        }
+        
+        .site-category {
+            font-size: 0.6875rem;
+            padding: 0.25rem 0.625rem;
+            background: var(--bg-sub);
+            color: var(--primary);
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        
+        .site-url {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+        }
+        
+        .site-note {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background: var(--bg-sub);
+            border-radius: 0.375rem;
+        }
+        
+        .site-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .badge {
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .badge-success {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .site-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 1rem;
+        }
+        
+        .modal {
+            background: var(--card);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+        }
+        
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .modal-body {
+            padding: 1.25rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.375rem;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.9375rem;
+            outline: none;
+            transition: all 0.2s ease;
+            background: var(--bg-sub);
+            color: var(--text);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary);
+            background: var(--card);
+            box-shadow: 0 0 0 3px rgba(201, 106, 62, 0.1);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .viewer-modal {
+            max-width: 95vw;
+            height: 90vh;
+        }
+        
+        .viewer-modal .modal-body {
+            padding: 0;
+            height: calc(90vh - 60px);
+        }
+        
+        .viewer-modal iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0 0 0.75rem 0.75rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--text);
+            color: white;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            z-index: 300;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.success {
+            background: var(--success);
+        }
+        
+        .toast.error {
+            background: var(--danger);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(1rem);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .cat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .cat-badge .del-cat {
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .cat-badge:hover .del-cat {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span>📦</span>
+                    <span>Site Navigation</span>
+                </div>
+                <div class="stats" v-if="loggedIn">
+                    <div class="stat-item" @click="showStatsModal = true" style="cursor: pointer;">
+                        <div class="stat-value">${ stats.total }</div>
+                        <div class="stat-label">站点总数</div>
+                    </div>
+                    <div class="stat-item" @click="showStatsModal = true" style="cursor: pointer;">
+                        <div class="stat-value">${ stats.snapshot_rate }%</div>
+                        <div class="stat-label">保存率</div>
+                    </div>
+                    <div class="stat-item" @click="showStatsModal = true" style="cursor: pointer;">
+                        <div class="stat-value">${ stats.categories }</div>
+                        <div class="stat-label">分类数</div>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" @click="showStatsModal = true">📊 统计</button>
+                    <button class="btn btn-ghost btn-sm" @click="showUserModal = true">👤 ${ username }</button>
+                </div>
+            </div>
+        </header>
+        
+        <div v-if="!loggedIn" class="login-container">
+            <div class="login-box">
+                <div class="login-icon">🗺️</div>
+                <div class="login-title">Site Navigation</div>
+                <div class="login-subtitle">一站式收藏管理 · 离线保存 · 永不丢失</div>
+                <div class="form-group">
+                    <input type="text" class="form-input" v-model="authForm.username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-input" v-model="authForm.password" placeholder="请输入密码" @keyup.enter="login">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" @click="login">登 录</button>
+                <button class="btn btn-ghost" style="width: 100%; margin-top: 0.5rem;" @click="register">注册新账号</button>
+                <div v-if="authError" class="login-error">${ authError }</div>
+            </div>
+        </div>
+        
+        <main class="main" v-if="loggedIn">
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" v-model="search" placeholder="搜索站点..." @input="loadSites">
+                </div>
+                <button class="btn btn-primary" @click="showAddModal = true">+ 添加站点</button>
+                <button class="btn btn-ghost" @click="showCatModal = true">📁 管理分类</button>
+                <button class="btn btn-success" @click="exportSites">📊 导出Excel</button>
+            </div>
+            
+            <div class="filter-btns" style="margin-bottom: 1.5rem;">
+                <button class="filter-btn" :class="{ active: !filterCat }" @click="filterCat = null; loadSites()">全部</button>
+                <button class="filter-btn" v-for="cat in categories" :class="{ active: filterCat === cat.id }" @click="filterCat = cat.id; loadSites()">
+                    ${ cat.name } (${ cat.site_count })
+                </button>
+            </div>
+            
+            <div v-if="loading" class="loading">加载中...</div>
+            <div v-else-if="sites.length === 0" class="empty-state">
+                <div class="empty-icon">📭</div>
+                <div>还没有收藏的站点</div>
+                <button class="btn btn-primary" style="margin-top: 1rem;" @click="showAddModal = true">添加第一个站点</button>
+            </div>
+            <div v-else class="site-grid">
+                <div class="site-card" v-for="site in sites" :key="site.id">
+                    <div class="site-header">
+                        <div class="site-title">${ site.title }</div>
+                        <span class="site-category">${ site.category }</span>
+                    </div>
+                    <div class="site-url">${ site.url }</div>
+                    <div v-if="site.note" class="site-note">${ site.note }</div>
+                    <div class="site-badges">
+                        <span v-if="site.has_snapshot" class="badge badge-success">✓ 已存HTML</span>
+                        <span v-if="site.has_screenshot" class="badge badge-success">📷 截图</span>
+                    </div>
+                    <div class="site-actions">
+                        <a :href="site.url" target="_blank" class="btn btn-ghost btn-sm">访问</a>
+                        <button class="btn btn-success btn-sm" @click="saveSnapshot(site)" :disabled="site.saving">
+                            ${ site.saving ? '保存中...' : '💾 快照' }
+                        </button>
+                        <button class="btn btn-ghost btn-sm" @click="viewSnapshot(site)" v-if="site.has_snapshot">查看</button>
+                        <button class="btn btn-ghost btn-sm" @click="editSite(site)">编辑</button>
+                        <button class="btn btn-danger btn-sm" @click="deleteSite(site)">删除</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <div v-if="showAddModal || showEditModal" class="modal-overlay" @click.self="closeModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">${ showEditModal ? '编辑站点' : '添加站点' }</div>
+                    <button class="modal-close" @click="closeModal">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">网址 *</label>
+                        <input type="url" class="form-input" v-model="form.url" placeholder="https://example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">标题</label>
+                        <input type="text" class="form-input" v-model="form.title" placeholder="自动从URL提取">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">分类</label>
+                        <select class="form-select" v-model="form.category_id">
+                            <option :value="null">未分类</option>
+                            <option v-for="cat in categories" :value="cat.id">${ cat.name }</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">备注</label>
+                        <textarea class="form-textarea" v-model="form.note" placeholder="可选备注信息"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" @click="closeModal">取消</button>
+                    <button class="btn btn-primary" @click="saveSite">${ showEditModal ? '保存修改' : '添加' }</button>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="showCatModal" class="modal-overlay" @click.self="showCatModal = false">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">管理分类</div>
+                    <button class="modal-close" @click="showCatModal = false">×</button>
+                </div>
+                <div class="modal-body">
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <input type="text" class="form-input" v-model="newCatName" placeholder="新分类名称">
+                        <button class="btn btn-primary" @click="addCategory">添加</button>
+                    </div>
+                    <div v-for="cat in categories" :key="cat.id" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid var(--border);">
+                        <span>${ cat.name } (${ cat.site_count })</span>
+                        <button class="btn btn-danger btn-sm" @click="deleteCategory(cat.id)">删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="showStatsModal" class="modal-overlay" @click.self="showStatsModal = false">
+            <div class="modal" style="max-width: 700px;">
+                <div class="modal-header">
+                    <div class="modal-title">📊 数据统计</div>
+                    <button class="modal-close" @click="showStatsModal = false">×</button>
+                </div>
+                <div class="modal-body">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="text-align: center; padding: 1.25rem; background: linear-gradient(135deg, #e07a3d 0%, #f4a261 100%); border-radius: 16px; color: white; box-shadow: 0 4px 16px rgba(224, 122, 61, 0.3);">
+                            <div style="font-size: 2rem; font-weight: 700;">${ stats.total }</div>
+                            <div style="font-size: 0.875rem; opacity: 0.9;">站点总数</div>
+                        </div>
+                        <div style="text-align: center; padding: 1.25rem; background: linear-gradient(135deg, #d4a373 0%, #e9c46a 100%); border-radius: 16px; color: white; box-shadow: 0 4px 16px rgba(212, 163, 115, 0.3);">
+                            <div style="font-size: 2rem; font-weight: 700;">${ stats.snapshot_rate }%</div>
+                            <div style="font-size: 0.875rem; opacity: 0.9;">保存率</div>
+                        </div>
+                        <div style="text-align: center; padding: 1.25rem; background: linear-gradient(135deg, #f4a261 0%, #e76f51 100%); border-radius: 16px; color: white; box-shadow: 0 4px 16px rgba(244, 162, 97, 0.3);">
+                            <div style="font-size: 2rem; font-weight: 700;">${ stats.categories }</div>
+                            <div style="font-size: 0.875rem; opacity: 0.9;">分类数</div>
+                        </div>
+                    </div>
+                    <div id="categoryChart" style="width: 100%; height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="showUserModal" class="modal-overlay" @click.self="showUserModal = false">
+            <div class="modal" style="max-width: 400px;">
+                <div class="modal-header">
+                    <div class="modal-title">👤 用户中心</div>
+                    <button class="modal-close" @click="showUserModal = false">×</button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #e07a3d 0%, #f4a261 100%); border-radius: 20px; color: white; margin-bottom: 1.5rem; box-shadow: 0 8px 24px rgba(224, 122, 61, 0.3);">
+                        <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">👤</div>
+                        <div style="font-size: 1.5rem; font-weight: 600;">${ username }</div>
+                        <div style="font-size: 0.875rem; opacity: 0.85;">注册用户</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">原密码</label>
+                        <input type="password" class="form-input" v-model="passwordForm.old_password" placeholder="请输入原密码">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">新密码</label>
+                        <input type="password" class="form-input" v-model="passwordForm.new_password" placeholder="请输入新密码（至少4位）">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" @click="changePassword">修改密码</button>
+                    <div v-if="passwordError" style="color: var(--danger); text-align: center; margin-top: 0.5rem; font-size: 0.875rem;">${ passwordError }</div>
+                    <button class="btn btn-ghost" style="width: 100%; margin-top: 0.75rem;" @click="logout">🚪 退出登录</button>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="showViewer" class="modal-overlay" @click.self="showViewer = false">
+            <div class="modal viewer-modal">
+                <div class="modal-header">
+                    <div class="modal-title">${ viewingSite?.title }</div>
+                    <button class="modal-close" @click="showViewer = false">×</button>
+                </div>
+                <div class="modal-body">
+                    <iframe :src="'/api/sites/' + viewingSite?.id + '/view'"></iframe>
+                </div>
+            </div>
+        </div>
+        
+        <div v-if="toast" :class="['toast', toast.type]">${ toast.msg }</div>
+    </div>
+    
+    <script>
+        const { createApp, ref, onMounted, watch } = Vue;
+        
+        createApp({
+            compilerOptions: {
+                delimiters: ['${', '}']
+            },
+            setup() {
+                const sites = ref([]);
+                const categories = ref([]);
+                const loading = ref(true);
+                const search = ref('');
+                const filterCat = ref(null);
+                const stats = ref({ total: 0, with_snapshot: 0, categories: 0, snapshot_rate: 0, category_data: [] });
+                
+                const showAddModal = ref(false);
+                const showEditModal = ref(false);
+                const showCatModal = ref(false);
+                const showViewer = ref(false);
+                const showStatsModal = ref(false);
+                const showUserModal = ref(false);
+                const viewingSite = ref(null);
+                const newCatName = ref('');
+                
+                const form = ref({ url: '', title: '', category_id: null, note: '' });
+                const editingId = ref(null);
+                const toast = ref(null);
+                
+                const loggedIn = ref(false);
+                const username = ref('');
+                const authForm = ref({ username: '', password: '' });
+                const authError = ref('');
+                const passwordForm = ref({ old_password: '', new_password: '' });
+                
+                const checkAuth = async () => {
+                    const res = await fetch('/api/auth/check');
+                    const data = await res.json();
+                    loggedIn.value = data.logged_in;
+                    if (data.logged_in) {
+                        username.value = data.username;
+                        loadSites();
+                        loadCategories();
+                        loadStats();
+                    }
+                };
+                
+                const login = async () => {
+                    authError.value = '';
+                    const res = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(authForm.value)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        loggedIn.value = true;
+                        username.value = data.username;
+                        loadSites();
+                        loadCategories();
+                        loadStats();
+                    } else {
+                        authError.value = data.error;
+                    }
+                };
+                
+                const register = async () => {
+                    authError.value = '';
+                    const res = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(authForm.value)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        loggedIn.value = true;
+                        username.value = data.username;
+                        loadCategories();
+                        loadSites();
+                        loadStats();
+                    } else {
+                        authError.value = data.error;
+                    }
+                };
+                
+                const logout = async () => {
+                    await fetch('/api/auth/logout', { method: 'POST' });
+                    loggedIn.value = false;
+                    showUserModal.value = false;
+                    sites.value = [];
+                    categories.value = [];
+                    stats.value = { total: 0, with_snapshot: 0, categories: 0, snapshot_rate: 0 };
+                };
+                
+                const passwordError = ref('');
+                
+                const changePassword = async () => {
+                    passwordError.value = '';
+                    if (!passwordForm.value.old_password || !passwordForm.value.new_password) {
+                        passwordError.value = '请填写完整';
+                        return;
+                    }
+                    const res = await fetch('/api/auth/password', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(passwordForm.value)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('密码修改成功');
+                        passwordForm.value = { old_password: '', new_password: '' };
+                        showUserModal.value = false;
+                    } else {
+                        passwordError.value = data.error;
+                    }
+                };
+                
+                const exportSites = async () => {
+                    if (!loggedIn.value) {
+                        showToast('请先登录', 'error');
+                        return;
+                    }
+                    
+                    const link = document.createElement('a');
+                    link.href = '/api/sites/export';
+                    link.download = 'sitevault_export.xlsx';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    showToast('导出成功');
+                };
+                
+                const showToast = (msg, type = 'success') => {
+                    toast.value = { msg, type };
+                    setTimeout(() => toast.value = null, 3000);
+                };
+                
+                const loadSites = async () => {
+                    if (!loggedIn.value) return;
+                    loading.value = true;
+                    try {
+                        let url = '/api/sites?';
+                        if (filterCat.value) url += 'category_id=' + filterCat.value + '&';
+                        if (search.value) url += 'search=' + encodeURIComponent(search.value);
+                        const res = await fetch(url);
+                        if (res.status === 401) { loggedIn.value = false; return; }
+                        sites.value = await res.json();
+                    } finally {
+                        loading.value = false;
+                    }
+                };
+                
+                const loadCategories = async () => {
+                    if (!loggedIn.value) return;
+                    const res = await fetch('/api/categories');
+                    if (res.status === 401) { loggedIn.value = false; return; }
+                    categories.value = await res.json();
+                };
+                
+                const loadStats = async () => {
+                    if (!loggedIn.value) return;
+                    const res = await fetch('/api/stats');
+                    if (res.status === 401) { loggedIn.value = false; return; }
+                    stats.value = await res.json();
+                };
+                
+                const initChart = () => {
+                    if (showStatsModal.value && stats.value.category_data && stats.value.category_data.length > 0) {
+                        setTimeout(() => {
+                            const chartDom = document.getElementById('categoryChart');
+                            if (!chartDom) return;
+                            const myChart = echarts.init(chartDom);
+                            const chartData = stats.value.category_data;
+                            myChart.setOption({
+                                title: {
+                                    text: '分类分布',
+                                    left: 'center',
+                                    top: 10,
+                                    textStyle: { fontSize: 14, fontWeight: 'normal' }
+                                },
+                                tooltip: {
+                                    trigger: 'item',
+                                    formatter: '{b}: {c} ({d}%)'
+                                },
+                                legend: {
+                                    bottom: 10,
+                                    left: 'center'
+                                },
+                                series: [{
+                                    type: 'pie',
+                                    radius: ['40%', '70%'],
+                                    center: ['50%', '45%'],
+                                    avoidLabelOverlap: false,
+                                    itemStyle: {
+                                        borderRadius: 8,
+                                        borderColor: '#fff',
+                                        borderWidth: 2
+                                    },
+                                    label: {
+                                        show: false
+                                    },
+                                    emphasis: {
+                                        label: {
+                                            show: true,
+                                            fontSize: 14,
+                                            fontWeight: 'bold'
+                                        }
+                                    },
+                                    labelLine: {
+                                        show: false
+                                    },
+                                    data: chartData.map((item, index) => ({
+                                        value: item.value,
+                                        name: item.name,
+                                        itemStyle: {
+                                            color: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'][index % 8]
+                                        }
+                                    }))
+                                }]
+                            });
+                        }, 100);
+                    }
+                };
+                
+                const saveSite = async () => {
+                    if (!form.value.url) {
+                        showToast('请输入网址', 'error');
+                        return;
+                    }
+                    
+                    const data = { ...form.value };
+                    if (!data.title) data.title = data.url;
+                    
+                    let res;
+                    if (showEditModal.value) {
+                        res = await fetch('/api/sites/' + editingId.value, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+                    } else {
+                        res = await fetch('/api/sites', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+                    }
+                    
+                    if (res.ok) {
+                        showToast(showEditModal.value ? '更新成功' : '添加成功');
+                        closeModal();
+                        loadSites();
+                        loadStats();
+                        loadCategories();
+                    } else {
+                        showToast('操作失败', 'error');
+                    }
+                };
+                
+                const editSite = (site) => {
+                    editingId.value = site.id;
+                    form.value = { url: site.url, title: site.title, category_id: site.category_id, note: site.note };
+                    showEditModal.value = true;
+                };
+                
+                const deleteSite = async (site) => {
+                    if (!confirm('确定删除 ' + site.title + '？')) return;
+                    const res = await fetch('/api/sites/' + site.id, { method: 'DELETE' });
+                    if (res.ok) {
+                        showToast('删除成功');
+                        loadSites();
+                        loadStats();
+                        loadCategories();
+                    }
+                };
+                
+                const saveSnapshot = async (site) => {
+                    site.saving = true;
+                    const res = await fetch('/api/sites/' + site.id + '/snapshot', { method: 'POST' });
+                    site.saving = false;
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('保存成功');
+                        loadSites();
+                        loadStats();
+                    } else {
+                        showToast(data.error || '保存失败', 'error');
+                    }
+                };
+                
+                const viewSnapshot = (site) => {
+                    viewingSite.value = site;
+                    showViewer.value = true;
+                };
+                
+                const addCategory = async () => {
+                    if (!newCatName.value.trim()) return;
+                    const res = await fetch('/api/categories', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: newCatName.value.trim() })
+                    });
+                    if (res.ok) {
+                        newCatName.value = '';
+                        loadCategories();
+                        loadStats();
+                    } else {
+                        showToast('分类已存在', 'error');
+                    }
+                };
+                
+                const deleteCategory = async (id) => {
+                    if (!confirm('删除分类？站点将变为未分类。')) return;
+                    await fetch('/api/categories/' + id, { method: 'DELETE' });
+                    loadCategories();
+                    loadStats();
+                    loadSites();
+                };
+                
+                const closeModal = () => {
+                    showAddModal.value = false;
+                    showEditModal.value = false;
+                    editingId.value = null;
+                    form.value = { url: '', title: '', category_id: null, note: '' };
+                };
+                
+                onMounted(() => {
+                    checkAuth();
+                });
+                
+                watch(showStatsModal, (newVal) => {
+                    if (newVal) {
+                        loadStats();
+                        setTimeout(initChart, 150);
+                    }
+                });
+                
+                return {
+                    sites, categories, loading, search, filterCat, stats,
+                    showAddModal, showEditModal, showCatModal, showViewer, showStatsModal, showUserModal, viewingSite,
+                    form, toast, newCatName,
+                    loggedIn, username, authForm, authError, passwordForm, passwordError,
+                    loadSites, saveSite, editSite, deleteSite, saveSnapshot, viewSnapshot,
+                    addCategory, deleteCategory, closeModal,
+                    login, register, logout, checkAuth, changePassword, exportSites
+                };
+            }
+        }).mount('#app');
+    </script>
+    <!-- Theme system removed; using built-in neutral styles -->
+</body>
+</html>
